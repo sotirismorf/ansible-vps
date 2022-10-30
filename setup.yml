@@ -3,8 +3,3 @@
 - hosts: vultr-vps
   roles:
     - role: gitserver
-    # - role: foo_app_instance
-    #   vars:
-    #     dir: '/opt/b'
-    #     app_port: 5001
-    #   tags: typeB
