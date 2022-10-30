@@ -1,0 +1,34 @@
+---
+
+- name: Ensure docker is installed
+  pacman:
+    name: docker
+    state: present
+    reason: explicit
+
+- name: Ensure docker.service is enabled and started
+  ansible.builtin.systemd:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Ensure docker-py is installed
+  ansible.builtin.pip:
+    name: docker-py
+
+- name: Ensure gitlab docker container is running
+  community.docker.docker_container:
+    name: sm-gitlab
+    hostname: gitlab.sotirismorfakidis.com
+    image: gitlab/gitlab-ce
+    detach: yes
+    restart_policy: always
+    ports:
+      - '3022:22'
+      - '3080:80'
+      - '3443:443'
+    volumes:
+      - /srv/gitlab/logs:/var/log/gitlab
+      - /srv/gitlab/data:/var/opt/gitlab
+      - /srv/gitlab/config:/etc/gitlab
+    shm_size: 256M
