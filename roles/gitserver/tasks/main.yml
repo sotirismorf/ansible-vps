@@ -1,0 +1,35 @@
+---
+
+- name: Ensure git is installed
+  pacman:
+    name: git
+    state: present
+    reason: explicit
+
+- name: Ensure git user exists, whith git-shell
+  ansible.builtin.user:
+    name: git
+    group: git
+    home: /home/git
+    shell: /usr/bin/git-shell
+
+- name: Set up authorized keys
+  ansible.posix.authorized_key:
+    user: git
+    state: present
+    key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILi5vurXylzO6+bklz31a1oIbMGmTPXWqBLYabi8zJ4N sotiris'
+
+- name: Create git directory
+  ansible.builtin.file:
+    path: /srv/git
+    state: directory
+    owner: git
+    group: git
+
+- name: Initialise bare repos
+  ansible.builtin.git:
+    repo: https://github.com/sotirismorf/dotfiles.git
+    dest: /srv/git/dotfiles.git
+    bare: yes
+  become: yes
+  become_user: git
